@@ -8,7 +8,7 @@ sub EVENT_TIMER {
   if($timer eq "reko_saltamer_boat_shout") {
     my $zonetime = plugin::val('$zonetime');
 
-    if($zonetime == 300 || $zonetime == 900 || $zonetime == 1500 || $zonetime == 2100) {
+    if($zonetime == 57 || $zonetime == 657 || $zonetime == 1257 || $zonetime == 1857) {
       if($boatMessageShouted == 0) {
         quest::shout("The ship to Antonica has departed the Qeynos Docks. Please finish up any business you may have here in Erudin and make your way towards the docks if you intend to travel to Qeynos.");
         $boatMessageShouted = 1;
