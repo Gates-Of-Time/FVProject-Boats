@@ -117,15 +117,15 @@ sub boatsOnEventTimer {
   my $entity_list = plugin::val('$entity_list');
 
   if ($timer eq $boatConfig->timer()) {
-    if($boatConfig->spawned() == 0) {
-      if($boatConfig->cooldown() == 0) {
+    if($boatConfig->spawned() eq 0) {
+      if($boatConfig->cooldown() eq 0) {
         my $currentBoat = spawnBoatWithWait($zonetime, $boatConfig);
 
         if($currentBoat) {
           $boatConfig->currentBoat($currentBoat);
           $boatConfig->spawned(1);
           $boatConfig->cooldown(20);
-          quest::delete_data($currentBoat->waitKey());
+          quest::settimer("delete_wait_key", 5);
         }
         elsif($boatConfig->currentBoat() && $boatConfig->currentBoat()->wanderType() != 0) {
           # Unable to spawn a boat, so there probably shouldn't be any here.
@@ -165,6 +165,16 @@ sub boatsOnEventTimer {
         }
       }
     }
+  } elsif ($timer eq "delete_wait_key") {
+    quest::stoptimer("delete_wait_key");
+    my $currentBoat = $boatConfig->currentBoat();
+    if($currentBoat) {
+      my $waitKey = $currentBoat->waitKey();
+      if($waitKey) {
+        quest::debug("Delete wait key: $waitKey");
+        quest::delete_data($waitKey);
+      }
+    }
   }
 
   return $boatConfig;
@@ -176,7 +186,7 @@ sub boatsOnEventSignal {
   my $signal = shift;
 
   quest::debug("SIGNAL REQUEST: $signal");
-  if($signal == 1) {
+  if($signal eq 1) {
     quest::debug("Received request to despawn boat.");
     $boatConfig = despawnBoats($boatConfig);
   }
@@ -192,14 +202,14 @@ sub onBoatsWaypointArrive {
   my $npc = plugin::val('$npc');
   my $zonetime = plugin::val('$zonetime');
 
-  if($boatWaypoint && $npc->GetGrid() == $boatWaypoint->gridId()) {
+  if($boatWaypoint && $npc->GetGrid() eq $boatWaypoint->gridId()) {
     my $x = $npc->GetX();
     my $y = $npc->GetY();
     my $z = $npc->GetZ();
     $t = quest::GetTimeSeconds();
     quest::debug("ARRIVE: Actual Waypoint: $wp, RT: $t, TimeAtWaypoint: $zonetime, X: $x, Y: $y, Z: $z");
 
-    if($wp == $boatWaypoint->waypoint()) {
+    if($wp eq $boatWaypoint->waypoint()) {
       quest::debug("Boat is leaving at $zonetime, RT: $t!");
 
       my $controller_name = $boatWaypoint->controllerName();
@@ -248,10 +258,20 @@ sub spawnBoatWithWait {
   foreach $boat (@{$boatConfig->boats}) {
     if($boat->waitKey()) {
       my $wait = quest::get_data($boat->waitKey());
-      $boat = plugin::applyWait($boat, $wait, $zonetime);
+      if($wait) {
+        my $diff = plugin::subtract_eq_times($boat->startTime(), $wait);
+
+        if ($diff > 10) {
+          my $waitKey = $boat->waitKey();
+          quest::debug("Wait is too great from zone time ($diff). Removing wait key $waitKey.");
+          quest::delete_data($waitKey);
+        } else {
+          $boat = plugin::applyWait($boat, $wait, $zonetime);
+        }
+      }
     }
 
-    if($boat && $boat->spawned() == 0 && plugin::boatShouldBeHere($boat, $zonetime)) {
+    if($boat && $boat->spawned() eq 0 && plugin::boatShouldBeHere($boat, $zonetime)) {
       $t = quest::GetTimeSeconds();
       quest::debug("Spawning boat $boat");
       quest::debug("Boat is here at $zonetime, RT: $t!");
@@ -277,7 +297,9 @@ sub despawnBoats {
       $boat->npc(0);
       $boat->waitStartTime($boat->startTime());
       $boat->remainingPause(0);
-      quest::delete_data($boat->waitKey());
+      my $waitKey = $boat->waitKey();
+      quest::debug("Deleting wait key: $waitKey");
+      quest::delete_data($waitKey);
     }
     $boatConfig->spawned(0);
     $boatConfig->currentBoat(0);
@@ -392,7 +414,7 @@ sub GetBoatInfo {
     $waypoint->estimatedZonetime($estimated_zonetime);
     $waypoint->runningTime($running_time);
 
-    if($index == 0) {
+    if($index eq 0) {
       $tmpBoat->heading($waypoint->heading());
       $tmpBoat->location([$row[0], $row[1], $row[2]]);
       $tmpBoat->currentWaypoint($waypoint);
