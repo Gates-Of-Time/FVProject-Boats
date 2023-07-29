@@ -125,7 +125,7 @@ sub boatsOnEventTimer {
           $boatConfig->currentBoat($currentBoat);
           $boatConfig->spawned(1);
           $boatConfig->cooldown(20);
-          quest::settimer("delete_wait_key", 5);
+          quest::settimer("delete_wait_key", 10);
         }
         elsif($boatConfig->currentBoat() && $boatConfig->currentBoat()->wanderType() != 0) {
           # Unable to spawn a boat, so there probably shouldn't be any here.
