@@ -46,6 +46,7 @@ struct Boat => {
   gridId => '$',
   zoneId => '$',
   speed => '$',
+  wanderType => '$',
   location => '@',
   heading => '$',
   spawned => '$',
@@ -126,7 +127,7 @@ sub boatsOnEventTimer {
           $boatConfig->cooldown(20);
           quest::delete_data($currentBoat->waitKey());
         }
-        elsif($boatConfig->currentBoat()) {
+        elsif($boatConfig->currentBoat() && $boatConfig->currentBoat()->wanderType() != 0) {
           # Unable to spawn a boat, so there probably shouldn't be any here.
           # Make sure to remove it if there is.
           my $npc = $boatConfig->currentBoat()->npc();
@@ -142,7 +143,7 @@ sub boatsOnEventTimer {
         $boatConfig->cooldown($boatConfig->cooldown() - 1);
       }
     }
-    elsif($boatConfig->currentBoat()) {
+    elsif($boatConfig->currentBoat() && $boatConfig->currentBoat()->wanderType() != 0) {
       # Check to see if the time has changed by a conservative value and
       # despawn boats if it has and we are no longer in the boat window.
       my $zt_diff = abs(plugin::subtract_eq_times($zonetime, $boatConfig->lastZonetime()));
@@ -201,7 +202,10 @@ sub onBoatsWaypointArrive {
     if($wp == $boatWaypoint->waypoint()) {
       quest::debug("Boat is leaving at $zonetime, RT: $t!");
 
+      my $controller_name = $boatWaypoint->controllerName();
+      quest::debug("Controller Name: $controller_name");
       my $controllerId = quest::get_data($boatWaypoint->controllerName());
+      quest::debug("Controller ID: $controllerId");
       quest::signalwith($controllerId, 1, 10000);
 
       quest::set_data($boatWaypoint->waitKey(), $zonetime);
@@ -242,9 +246,10 @@ sub spawnBoatWithWait {
   my $selectedBoat;
 
   foreach $boat (@{$boatConfig->boats}) {
-    my $wait = quest::get_data($boat->waitKey());
-
-    $boat = plugin::applyWait($boat, $wait, $zonetime);
+    if($boat->waitKey()) {
+      my $wait = quest::get_data($boat->waitKey());
+      $boat = plugin::applyWait($boat, $wait, $zonetime);
+    }
 
     if($boat && $boat->spawned() == 0 && plugin::boatShouldBeHere($boat, $zonetime)) {
       $t = quest::GetTimeSeconds();
@@ -345,6 +350,12 @@ sub GetBoatInfo {
   my $speed = $row[1] * 15;
   $tmpBoat->speed($speed);
 
+  $query = "SELECT type FROM grid WHERE id = $gridId and zoneid = $zoneId LIMIT 1;";
+  $query_handle = $connect->prepare($query);
+	$query_handle->execute();
+  @row = $query_handle->fetchrow_array();
+  $tmpBoat->wanderType($row[0]);
+
   $query = "SELECT x, y, z, heading, pause, number FROM grid_entries WHERE gridid = $gridId and zoneid = $zoneId ORDER BY number;";
 	$query_handle = $connect->prepare($query);
 	$query_handle->execute();
@@ -374,7 +385,6 @@ sub GetBoatInfo {
       $this_running_time = ($distance / ($tmpBoat->speed() / 15) / $eq_constant) + ($last_waypoint->pause() / 3);
       $this_running_time *= 60;
       $running_time = $last_waypoint->runningTime() + $this_running_time;
-
       $estimated_zonetime = time2eq($running_time);
     }
 
@@ -543,6 +553,13 @@ sub spawnBoat {
     $tmpBoat->heading()
   );
 
+  return plugin::updateNpc($tmpBoat, $boatID);
+};
+
+sub updateNpc {
+  my $tmpBoat = shift;
+  my $boatID = shift;
+
   my $entity_list = plugin::val('$entity_list');
   my $npc = $entity_list->GetNPCByID($boatID);
 
@@ -566,7 +583,7 @@ sub spawnBoat {
   $tmpBoat->npc($npc);
 
   return $tmpBoat;
-}
+};
 
 
 sub boatDebug {
@@ -575,9 +592,13 @@ sub boatDebug {
   my $start_time = $tmpboat->startTime();
   my $end_time = $tmpboat->endTime();
   my $distance = $tmpboat->totalRouteDistance();
+  my $wander_type = $tmpboat->wanderType();
+  my $spawned = $tmpboat->spawned();
   my $wait = $tmpboat->wait();
   quest::debug("Boat enters at $start_time and leaves at $end_time");
   quest::debug("Total Travel Distance: $distance");
+  quest::debug("Wander Type: $wander_type");
+  quest::debug("Spawned: $spawned");
   if($wait) {
     quest::debug("Boat Wait: $wait");
   }
