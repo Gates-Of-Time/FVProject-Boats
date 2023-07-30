@@ -117,8 +117,8 @@ sub boatsOnEventTimer {
   my $entity_list = plugin::val('$entity_list');
 
   if ($timer eq $boatConfig->timer()) {
-    if($boatConfig->spawned() eq 0) {
-      if($boatConfig->cooldown() eq 0) {
+    if(!$boatConfig->spawned() || $boatConfig->spawned() eq 0) {
+      if(!$boatConfig->cooldown() || $boatConfig->cooldown() eq 0) {
         my $currentBoat = spawnBoatWithWait($zonetime, $boatConfig);
 
         if($currentBoat) {
@@ -256,19 +256,19 @@ sub spawnBoatWithWait {
   my $selectedBoat;
 
   foreach $boat (@{$boatConfig->boats}) {
+    # Set the boat spawn time to what the previous zones boat
+    # said it was when it zoned players over
     if($boat->waitKey()) {
       my $wait = quest::get_data($boat->waitKey());
       if($wait) {
-        my $diff = plugin::subtract_eq_times($boat->startTime(), $wait);
-
-        if ($diff > 10) {
-          my $waitKey = $boat->waitKey();
-          quest::debug("Wait is too great from zone time ($diff). Removing wait key $waitKey.");
-          quest::delete_data($waitKey);
-        } else {
-          $boat = plugin::applyWait($boat, $wait, $zonetime);
-        }
+        $boat = plugin::applyWait($boat, $wait, $zonetime);
       }
+    }
+
+    # Set the boat to spawn before its actual time to catch people incase they zone really fast.
+    if($boat && $boat->wanderType() eq 6) {
+      my $wait = plugin::subtract_seconds_to_eq_times($boat->startTime(), 5);
+      $boat = plugin::applyWait($boat, $wait, $boat->startTime());
     }
 
     if($boat && $boat->spawned() eq 0 && plugin::boatShouldBeHere($boat, $zonetime)) {
@@ -442,10 +442,8 @@ sub applyWait {
   if($tmpBoat) {
     my $start = $tmpBoat->startTime();
     if($wait && $wait > 0) {
-      quest::debug("Wait set: $wait");
       my $diff = plugin::subtract_eq_times($tmpBoat->startTime(), $wait);
       if($diff > 0) {
-        quest::debug("Diff set: $diff");
         $tmpBoat->wait($diff * 3);
         $tmpBoat->waitStartTime($wait);
       }
