@@ -8,7 +8,21 @@ my $boatWaypoint = BoatWaypoint->new(
   waypoint => 10
 );
 
-sub EVENT_WAYPOINT_ARRIVE
-{
+my $triggeredSabrina = 0;
+
+sub EVENT_SPAWN {
+  $triggeredSabrina = 0;
+}
+
+sub EVENT_WAYPOINT_ARRIVE {
   $boatWaypoint = plugin::onBoatsWaypointArrive($boatWaypoint, $wp);
+
+  if($triggeredSabrina == 0 && $wp >= 3) {
+    $triggeredSabrina = 1;
+    quest::signalwith(24056, 1);
+  }
+  elsif($wp == 7) {
+    $triggeredSabrina = 0;
+    quest::signalwith(24056, 2);
+  }
 }

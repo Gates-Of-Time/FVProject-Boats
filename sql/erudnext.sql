@@ -35,10 +35,8 @@ INSERT INTO spawnentry(spawngroupID, npcID, chance, content_flags) VALUES (@spaw
 INSERT INTO spawn2(spawngroupID, zone, x, y, z, heading, pathgrid, content_flags) VALUES(@spawngroupID, 'erudnext', -350.000000, 48.000000, 0, 384.000000, 23, 'boats');
 INSERT INTO grid (id, zoneid, type, type2) VALUES (23, 24, 0, 1);
 DELETE FROM grid_entries WHERE gridid = 23 AND zoneid = 24;
-INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 1, -350.000000, 48.000000, 0, 384.000000, 70, 0);
-INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 2, -627.000000, 48.000000, 0, 384.000000, 100, 0);
-INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 3, -349.900000, 48.000000, 0, 384.000000, 860, 0);
-INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 4, -350.000000, 48.000000, 0, 384.000000, 0, 0);
+INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 1, -350.000000, 48.000000, 0, 384.000000, 0, 0);
+INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 2, -627.000000, 48.000000, 0, 384.000000, 10000, 0);
 UPDATE npc_types set runspeed = 1.296 WHERE id = 24056;
 
 -- Disable translocators
