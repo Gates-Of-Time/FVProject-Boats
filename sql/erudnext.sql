@@ -32,7 +32,7 @@ UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 883;
 INSERT INTO spawngroup(name) VALUES('SabrinaErudinRoute');
 SELECT @spawngroupID := LAST_INSERT_ID();
 INSERT INTO spawnentry(spawngroupID, npcID, chance, content_flags) VALUES (@spawngroupID, 24056, 0, 'boats');
-INSERT INTO spawn2(spawngroupID, zone, x, y, z, heading, pathgrid, content_flags) VALUES(@spawngroupID, 'erudnext', -350.000000, 48.000000, 0, 384.000000, 23, 'boats');
+INSERT INTO spawn2(spawngroupID, zone, x, y, z, heading, pathgrid, content_flags) VALUES(@spawngroupID, 'erudnext', -350.000000, 48.000000, 0, 384.000000, 0, 'boats');
 INSERT INTO grid (id, zoneid, type, type2) VALUES (23, 24, 0, 1);
 DELETE FROM grid_entries WHERE gridid = 23 AND zoneid = 24;
 INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 1, -350.000000, 48.000000, 0, 384.000000, 0, 0);
