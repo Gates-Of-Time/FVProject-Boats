@@ -33,10 +33,10 @@ INSERT INTO spawngroup(name) VALUES('SabrinaErudinRoute');
 SELECT @spawngroupID := LAST_INSERT_ID();
 INSERT INTO spawnentry(spawngroupID, npcID, chance, content_flags) VALUES (@spawngroupID, 24056, 100, 'boats');
 INSERT INTO spawn2(spawngroupID, zone, x, y, z, heading, pathgrid, content_flags) VALUES(@spawngroupID, 'erudnext', -350.000000, 48.000000, 0, 384.000000, 0, 'boats');
-INSERT INTO grid (id, zoneid, type, type2) VALUES (23, 24, 0, 1);
+INSERT INTO grid (id, zoneid, type, type2) VALUES (23, 24, 3, 1);
 DELETE FROM grid_entries WHERE gridid = 23 AND zoneid = 24;
 INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 1, -350.000000, 48.000000, 0, 384.000000, 0, 0);
-INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 2, -627.000000, 48.000000, 0, 384.000000, 5, 0);
+INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES (23, 24, 2, -627.000000, 48.000000, 0, 384.000000, 120, 0);
 UPDATE npc_types set runspeed = 1.296 WHERE id = 24056;
 
 -- Disable translocators
