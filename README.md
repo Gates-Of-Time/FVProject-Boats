@@ -1,6 +1,6 @@
 ## EQEmu Boats
 
-This project helps add boat support to an existing eqemu server and database. It is currently built on a live dump from the Firiona Vie Project, but should be able to be applied to other eqemu dbs with minimal changes.
+This project helps add boat support to an existing eqemu server and database. It is currently built on a live dump from the Firiona Vie Project, but should be able to be applied to other eqemu dbs with minimal changes. These boats are designed to work with static AND dynamic zones.
 
 Currently the following boats are configured:
 
