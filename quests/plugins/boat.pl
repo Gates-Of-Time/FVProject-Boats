@@ -5,7 +5,6 @@
 #
 use POSIX 'fmod';
 use Class::Struct;
-use Math::Trig;
 use Time::Local;
 
 my $eq_to_real = 1.75;
