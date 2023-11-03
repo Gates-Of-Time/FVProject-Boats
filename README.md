@@ -9,10 +9,11 @@ Currently the following boats are configured:
 
 ### Installation
 
-1. Make sure that the following line is included at the end of the `Resources/GlobalLods.txt` file in the EQ Client.
+1. Make sure that the following lines are included at the end of the `Resources/GlobalLods.txt` file in the EQ Client.
 
 ```
 2,0,TFFFE,shi.eqg,Loading Characters
+3,0,TFFFC,timorous_chr,Loading Characters
 ```
 
 2. Copy the quest files from the `quests` folder in this project to the `quests` folder on your eqemu server. Each quest sub folder is named to match the sub folders on the server by zone name.
