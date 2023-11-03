@@ -42,3 +42,5 @@ UPDATE npc_types set runspeed = 1.296 WHERE id = 24056;
 -- Disable translocators
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 5424;
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 31153;
+
+UPDATE npc_types set runspeed = 2.3917 WHERE id = 24501;

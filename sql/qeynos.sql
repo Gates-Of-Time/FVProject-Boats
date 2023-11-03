@@ -36,3 +36,5 @@ UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 1300
 -- Enable port authority
 UPDATE npc_types set race = 127, gender = 0, bodytype = 100 WHERE id = 1194;
 UPDATE spawn2 SET enabled = '1', content_flags = 'boats', min_expansion = -1 WHERE spawngroupID = 13008;
+
+UPDATE npc_types set runspeed = 2.3917 WHERE id = 1501;

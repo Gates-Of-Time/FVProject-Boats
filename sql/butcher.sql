@@ -30,6 +30,7 @@ INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, cente
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 54798;
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 13193;
 
+UPDATE npc_types set runspeed = 3.33973515123456 WHERE id = 68009;
 
 -- This will be for the maidens voyage kunark route later
 -- UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 275105;

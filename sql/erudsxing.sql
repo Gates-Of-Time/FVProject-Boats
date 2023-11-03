@@ -47,3 +47,5 @@ INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, cente
 -- Disable translocators
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 13005;
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 12367;
+
+UPDATE npc_types set runspeed = 2.3917 WHERE id = 98501;

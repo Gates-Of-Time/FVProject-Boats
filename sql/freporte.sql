@@ -36,11 +36,10 @@ INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, cente
 INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES ('29', '10', '16', '-1811.28', '-577.699', '-77', '-1', '0', '0');
 INSERT INTO grid_entries (gridid, zoneid, number, x, y, z, heading, pause, centerpoint) VALUES ('29', '10', '17', '-1904', '-631', '-77', '-1', '2', '0');
 
-
-
-
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 13039;
 UPDATE spawnentry SET content_flags_disabled = 'boats' where spawngroupID = 54753;
 
 -- No clue what these doors are. Its a blank wall at end of dock.
 UPDATE doors SET content_flags_disabled = 'boats' where id IN (5892, 5893);
+
+UPDATE npc_types set runspeed = 3.33973515123456 WHERE id = 10137;
